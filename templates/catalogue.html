@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Catalogue & Commande - Ndala Business</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f0f4f8; color: #333; padding: 15px; }
+        
+        .container { max-width: 800px; margin: 0 auto; background: #ffffff; border-radius: 16px; padding: 25px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); }
+        
+        .header { text-align: center; margin-bottom: 30px; padding-bottom: 15px; border-bottom: 2px solid #edf2f7; }
+        .header h1 { color: #2c3e50; font-size: 28px; margin-bottom: 5px; }
+        .header p { color: #7f8c8d; font-size: 15px; }
+
+        .section-title { font-size: 18px; font-weight: bold; color: #27ae60; margin: 30px 0 15px 0; border-bottom: 2px solid #27ae60; padding-bottom: 8px; text-transform: uppercase; letter-spacing: 1px; }
+
+        /* Grille de produits */
+        .produit-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 20px; }
+        
+        .produit-card { background: #fff; border: 1px solid #e2e8f0; border-radius: 12px; overflow: hidden; transition: all 0.3s ease; display: flex; flex-direction: column; position: relative; }
+        .produit-card:hover { transform: translateY(-5px); box-shadow: 0 5px 15px rgba(39, 174, 96, 0.1); border-color: #27ae60; }
+        
+        .card-header { position: relative; padding-top: 100%; /* Ratio 1:1 Carré */ overflow: hidden; background-color: #f7fafc; }
+        .produit-img { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; transition: transform 0.3s ease; }
+        .produit-card:hover .produit-img { transform: scale(1.05); }
+
+        .card-body { padding: 15px; flex-grow: 1; display: flex; flex-direction: column; justify-content: space-between; }
+        .produit-info { margin-bottom: 10px; }
+        .produit-nom { font-weight: bold; font-size: 17px; color: #2d3748; display: block; margin-bottom: 2px; }
+        .produit-prix { color: #27ae60; font-weight: 700; font-size: 15px; }
+
+        .card-action { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding-top: 10px; border-top: 1px solid #edf2f7; }
+        
+        .produit-checkbox { width: 22px; height: 22px; cursor: pointer; accent-color: #27ae60; }
+        
+        .qte-box { display: flex; align-items: center; gap: 8px; background: #edf2f5; padding: 5px 10px; border-radius: 8px; }
+        .qte-box label { font-size: 13px; color: #718096; font-weight: 600; }
+        .qte-box input { width: 55px; padding: 5px; border: 1px solid #cbd5e0; border-radius: 6px; text-align: center; font-size: 14px; color: #2d3748; }
+
+        .hors-liste-card { grid-column: 1 / -1; background: #fffbeb; border: 2px dashed #f6ad55; padding: 20px; border-radius: 12px; margin-top: 20px; }
+        .hors-liste-header { display: flex; align-items: center; gap: 15px; margin-bottom: 15px; }
+
+        .form-group { margin-top: 18px; }
+        .form-group label { display: block; font-weight: bold; font-size: 14px; margin-bottom: 7px; color: #4a5568; }
+        .form-control { width: 100%; padding: 12px; border: 1px solid #cbd5e0; border-radius: 8px; font-size: 15px; transition: border-color 0.2s; }
+        .form-control:focus { outline: none; border-color: #27ae60; box-shadow: 0 0 0 3px rgba(39, 174, 96, 0.1); }
+
+        .sans-depot-box { background: #eef2ff; border: 1px solid #c7d2fe; border-radius: 10px; padding: 15px; margin-top: 20px; display: flex; align-items: center; gap: 12px; }
+        .sans-depot-box label { font-weight: 600; color: #3730a3; font-size: 15px; cursor: pointer; }
+
+        .numero-info-box { background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 10px; padding: 15px; margin-top: 15px; color: #166534; font-size: 14px; line-height: 1.5; }
+        .numero-info-box strong { color: #15803d; }
+
+        .btn-submit { display: block; width: 100%; background-color: #27ae60; color: white; border: none; padding: 16px; font-size: 17px; font-weight: bold; border-radius: 10px; cursor: pointer; margin-top: 35px; transition: background 0.2s ease; text-transform: uppercase; letter-spacing: 1px; }
+        .btn-submit:hover { background-color: #219150; }
+        .flash-msg { background-color: #fed7d7; color: #9b2c2c; padding: 12px; border-radius: 8px; margin-bottom: 20px; font-size: 14px; border: 1px solid #f5c6cb; }
+
+        @media (max-width: 600px) {
+            .container { padding: 15px; }
+            .header h1 { font-size: 22px; }
+            .produit-grid { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 15px; }
+            .produit-nom { font-size: 15px; }
+            .card-body { padding: 10px; }
+            .qte-box { padding: 3px 6px; }
+            .qte-box input { width: 45px; font-size: 13px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    
+    <div class="header">
+        <h1>Ndala Business</h1>
+        <p>Commandez vos légumes frais & épices en ligne</p>
+    </div>
+
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        {% for message in messages %}
+          <div class="flash-msg">{{ message }}</div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+    <form action="{{ url_for('passer_commande') }}" method="POST">
+        
+        <div class="section-title">Nos Légumes Frais</div>
+        <div class="produit-grid">
+            {% for p in legumes %}
+            <div class="produit-card">
+                <div class="card-header">
+                    <img src="{{ url_for('static', filename='images/legumes/' + (p.image_url if p.image_url else 'default.jpg')) }}" 
+                         alt="{{ p.nom_produit }}" 
+                         class="produit-img" 
+                         onerror="this.src='https://via.placeholder.com/250x250?text=Image+Indisponible'">
+                </div>
+                <div class="card-body">
+                    <div class="produit-info">
+                        <span class="produit-nom">{{ p.nom_produit }}</span>
+                        <span class="produit-prix">{{ "{:,.0f}".format(p.prix_unitaire).replace(",", " ") }} FC</span>
+                    </div>
+                    <div class="card-action">
+                        <input type="checkbox" name="produit[]" value="{{ p.nom_produit }}" class="produit-checkbox">
+                        <div class="qte-box">
+                            <label>Qté</label>
+                            <input type="number" name="quantite[]" value="1" min="1">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% else %}
+            <p style="grid-column: 1/-1; color: #718096; text-align: center; padding: 20px; background: #f7fafc; border-radius: 8px;">Aucun légume disponible actuellement.</p>
+            {% endfor %}
+        </div>
+
+        <div class="section-title">Nos Épices & Condiments</div>
+        <div class="produit-grid">
+            {% for p in epices %}
+            <div class="produit-card">
+                <div class="card-header">
+                    <img src="{{ url_for('static', filename='images/legumes/' + (p.image_url if p.image_url else 'default.jpg')) }}" 
+                         alt="{{ p.nom_produit }}" 
+                         class="produit-img" 
+                         onerror="this.src='https://via.placeholder.com/250x250?text=Image+Indisponible'">
+                </div>
+                <div class="card-body">
+                    <div class="produit-info">
+                        <span class="produit-nom">{{ p.nom_produit }}</span>
+                        <span class="produit-prix">{{ "{:,.0f}".format(p.prix_unitaire).replace(",", " ") }} FC</span>
+                    </div>
+                    <div class="card-action">
+                        <input type="checkbox" name="produit[]" value="{{ p.nom_produit }}" class="produit-checkbox">
+                        <div class="qte-box">
+                            <label>Qté</label>
+                            <input type="number" name="quantite[]" value="1" min="1">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% else %}
+            <p style="grid-column: 1/-1; color: #718096; text-align: center; padding: 20px; background: #f7fafc; border-radius: 8px;">Aucune épice disponible actuellement.</p>
+            {% endfor %}
+        </div>
+
+        <div class="section-title">Produit Sur Mesure</div>
+        <div class="hors-liste-card">
+            <div class="hors-liste-header">
+                <input type="checkbox" name="produit[]" value="autre" class="produit-checkbox">
+                <label class="produit-nom">Commander un article hors-catalogue</label>
+            </div>
+            <div style="display: flex; gap: 15px; align-items: flex-end; flex-wrap: wrap;">
+                <div style="flex-grow: 1; min-width: 250px;">
+                    <label style="font-size: 13px; color: #4a5568; font-weight: 600; margin-bottom: 5px; display: block;">Nom du produit souhaité</label>
+                    <input type="text" name="nom_autre[]" placeholder="Ex: Gombos frais, Bitoyo..." class="form-control">
+                </div>
+                <div class="qte-box" style="padding: 10px 15px;">
+                    <label>Quantité</label>
+                    <input type="number" name="quantite[]" value="1" min="1">
+                </div>
+            </div>
+        </div>
+
+        <div class="section-title">Paiement Mobile Money</div>
+        
+        <div class="sans-depot-box">
+            <input type="checkbox" name="sans_depot" id="sans_depot" value="1" class="produit-checkbox" onchange="togglePaiement(this)">
+            <label for="sans_depot">Commander sans dépôt immédiat (discuter du paiement sur WhatsApp)</label>
+        </div>
+
+        <div id="section_paiement_details">
+            <div class="numero-info-box">
+                <strong>Effectuez votre dépôt sur l'un des numéros ci-dessous :</strong><br>
+                • Airtel Money : <strong>099 266 64 17</strong><br>
+                • M-Pesa : <strong>083 783 00 2</strong>
+            </div>
+
+            <div class="form-group">
+                <label>Mode de paiement utilisé :</label>
+                <select name="mode_paiement" id="mode_paiement" class="form-control" required>
+                    <option value="" disabled selected>Choisir l'opérateur du dépôt</option>
+                    <option value="Airtel Money">Airtel Money (0992666417)</option>
+                    <option value="M-Pesa">Vodacom M-Pesa (083783002)</option>
+                </select>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                <div class="form-group">
+                    <label>Montant versé (FC) :</label>
+                    <input type="number" name="montant_verse" id="montant_verse" placeholder="Ex: 15000" class="form-control" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Référence SMS transaction :</label>
+                    <input type="text" name="reference_paiement" id="reference_paiement" placeholder="Ex: MP260725..." class="form-control" required>
+                </div>
+            </div>
+        </div>
+
+        <button type="submit" class="btn-submit">Valider et envoyer sur WhatsApp</button>
+    </form>
+</div>
+
+<script>
+function togglePaiement(checkbox) {
+    const blocPaiement = document.getElementById('section_paiement_details');
+    const inputs = blocPaiement.querySelectorAll('input, select');
+    
+    if (checkbox.checked) {
+        blocPaiement.style.display = 'none';
+        inputs.forEach(input => input.removeAttribute('required'));
+    } else {
+        blocPaiement.style.display = 'block';
+        inputs.forEach(input => input.setAttribute('required', 'required'));
+    }
+}
+</script>
+
+</body>
+</html>

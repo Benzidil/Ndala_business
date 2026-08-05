@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+
+{% block title %}Bienvenue - Ndala Business{% endblock %}
+
+{% block content %}
+<div style="padding: 20px; text-align: center;">
+    <!-- Logo et Slogan Dominant -->
+    <div style="margin-top: 30px; margin-bottom: 40px;">
+        <img src="{{ url_for('static', filename='images/logo.jpg') }}" alt="Logo Ndala Business" style="max-width: 140px; height: auto; margin-bottom: 15px;">
+        <h1 style="color: #2e7d32; margin: 5px 0; font-size: 1.8rem; font-weight: bold;">Ndala Business</h1>
+        <p style="font-style: italic; color: #555; font-size: 1rem; padding: 0 15px; margin-top: 10px; line-height: 1.4;">
+            "Fraîcheur, Qualité, Confiance"
+        </p>
+    </div>
+
+    <!-- Argument de Fidélité / Bonus -->
+    <div style="background: #e8f5e9; padding: 15px; border-radius: 12px; margin-bottom: 30px; text-align: left;">
+        <h4 style="margin: 0 0 5px 0; color: #1b5e20;">Rejoignez-nous !</h4>
+        <p style="margin: 0; font-size: 0.85rem; color: #444;">Créez votre compte aujourd'hui pour cumuler des bonus de fidélité et recevoir nos annonces exclusives directement sur l'application.</p>
+    </div>
+
+    <!-- Formulaire de Création de Compte Rapide -->
+    <form action="/inscription" method="POST" style="background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); text-align: left;">
+        <h3 style="margin-top: 0; color: #333; font-size: 1.1rem; margin-bottom: 15px;">Créer mon compte</h3>
+        
+        <div style="margin-bottom: 12px;">
+            <label style="display: block; margin-bottom: 4px; color: #555; font-size: 0.85rem; font-weight: bold;">Votre Nom complet</label>
+            <input type="text" name="nom" placeholder="Ex: Jean Mukendi" required style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 8px; box-sizing: border-box;">
+        </div>
+
+        <div style="margin-bottom: 12px;">
+            <label style="display: block; margin-bottom: 4px; color: #555; font-size: 0.85rem; font-weight: bold;">Numéro de Téléphone</label>
+            <input type="tel" name="telephone" placeholder="Ex: 0812345678" required style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 8px; box-sizing: border-box;">
+        </div>
+
+        <div style="margin-bottom: 20px;">
+            <label style="display: block; margin-bottom: 4px; color: #555; font-size: 0.85rem; font-weight: bold;">Mot de passe</label>
+            <input type="password" name="mot_de_passe" placeholder="Créer un mot de passe" required style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 8px; box-sizing: border-box;">
+        </div>
+
+        <button type="submit" style="width: 100%; background: #2e7d32; color: white; border: none; padding: 12px; border-radius: 8px; font-weight: bold; font-size: 1rem; cursor: pointer;">
+            Créer mon compte et continuer
+        </button>
+    </form>
+
+    <p style="margin-top: 20px; font-size: 0.85rem; color: #666;">
+        Déjà inscrit ? <a href="/connexion" style="color: #2e7d32; font-weight: bold; text-decoration: none;">Se connecter</a>
+    </p>
+</div>
+{% endblock %}

@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>{% block title %}Ndala Business{% endblock %}</title>
+    
+    <!-- PWA Configuration -->
+    <link rel="manifest" href="{{ url_for('static', filename='manifest.json') }}">
+    <meta name="theme-color" content="#2e7d32">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+        }
+        .mobile-container {
+            max-width: 450px;
+            margin: 0 auto;
+            background: #ffffff;
+            min-height: 100vh;
+            box-sizing: border-box;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            position: relative;
+        }
+        .btn-main {
+            display: block;
+            background: #2e7d32;
+            color: white;
+            text-align: center;
+            padding: 14px;
+            border-radius: 25px;
+            font-size: 1rem;
+            font-weight: bold;
+            text-decoration: none;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+        /* Style global pour aligner proprement les icônes Lucide */
+        i[data-lucide] {
+            display: inline-block;
+            vertical-align: middle;
+        }
+    </style>
+
+    <!-- Bibliothèque d'icônes professionnelles (Lucide) -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+
+    <div class="mobile-container">
+        <!-- Message flash de Flask pour les erreurs/succès de formulaires -->
+        {% with messages = get_flashed_messages() %}
+          {% if messages %}
+            <div style="background: #ffebee; color: #c62828; padding: 12px; margin: 10px; border-radius: 8px; font-size: 0.9rem; text-align: center;">
+              {% for message in messages %}{{ message }}{% endfor %}
+            </div>
+          {% endif %}
+        {% endwith %}
+
+        {% block content %}{% endblock %}
+    </div>
+
+    <script>
+      // 1. Initialisation du Service Worker pour la PWA
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register("{{ url_for('static', filename='sw.js') }}")
+            .then(reg => console.log('PWA OK'))
+            .catch(err => console.error(err));
+        });
+      }
+
+      // 2. Activation automatique des icônes Lucide sur toutes les pages enfants
+      document.addEventListener("DOMContentLoaded", function() {
+        lucide.createIcons();
+      });
+    </script>
+</body>
+</html>

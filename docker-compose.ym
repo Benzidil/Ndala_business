@@ -1,0 +1,33 @@
+version: '3.8'
+
+services:
+  # Service Base de données MySQL
+  db:
+    image: mysql:8.0
+    container_name: ndala_db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: '' # Ou définissez un mot de passe
+      MYSQL_ALLOW_EMPTY_PASSWORD: 'yes'
+      MYSQL_DATABASE: 'ndala_business_db'
+    ports:
+      - "3306:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+
+  # Service Application Flask
+  web:
+    build: .
+    container_name: ndala_app
+    ports:
+      - "5000:5000"
+    environment:
+      - MYSQL_HOST=db
+      - MYSQL_USER=root
+      - MYSQL_PASSWORD=
+      - MYSQL_DB=ndala_business_db
+    depends_on:
+      - db
+
+volumes:
+  db_data:

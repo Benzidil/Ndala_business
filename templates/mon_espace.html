@@ -1,0 +1,110 @@
+{% extends 'base.html' %}
+
+{% block title %}Mon Espace - Ndala Business{% endblock %}
+
+{% block content %}
+<div style="padding: 20px;">
+
+    <!-- CARTE PROFIL CLIENT -->
+    <div style="background: white; padding: 20px; border-radius: 15px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); text-align: center; margin-bottom: 20px; border: 1px solid #eee;">
+        <div style="color: #2e7d32; margin-bottom: 10px; display: flex; justify-content: center;">
+            <!-- Icône Bonhomme -->
+            <i data-lucide="user" style="width: 50px; height: 50px;"></i>
+        </div>
+        <h2 style="margin: 0; color: #333; font-size: 1.3rem;">Mon Profil</h2>
+        
+        <!-- Téléphone dynamique -->
+        <p style="margin: 5px 0; color: #666; font-size: 0.9rem; font-weight: bold;">
+            {{ utilisateur.telephone if utilisateur else '+243 ...' }}
+        </p>
+        
+        <div style="display: inline-block; background: #e8f5e9; color: #2e7d32; padding: 6px 15px; border-radius: 20px; font-size: 0.85rem; font-weight: bold; margin-top: 10px;">
+            {{ utilisateur.nom if utilisateur else 'Nom Inconnu' }}
+        </div>
+    </div>
+
+    <!-- CARTE BESOIN D'AIDE -->
+     
+    <div style="background: #e3f2fd; padding: 15px; border-radius: 15px; margin-bottom: 25px;">
+        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 8px;">
+            <div style="color: #02866a;">
+                <i data-lucide="message-square" style="width: 22px; height: 22px;"></i>
+            </div>
+            <h4 style="margin: 0; color: #057a4d; font-size: 1rem;">Besoin d'aide ou suivi ?</h4>
+        </div>
+        <p style="margin: 0 0 12px 0; font-size: 0.85rem; color: #333; line-height: 1.4;">
+            Une question sur une livraison en cours ou une modification ? Discutez directement avec le PDG en ligne.
+        </p>
+        <a href="https://wa.me/243818378478?text=Bonjour%20PDG%20Ndala%20Business,%20je%20souhaite%20faire%20le%20suivi%20de%20mon%20compte..." 
+           target="_blank" 
+           style="display: inline-flex; align-items: center; gap: 8px; background: #005f3b; color: white; padding: 8px 16px; border-radius: 20px; text-decoration: none; font-size: 0.85rem; font-weight: bold; box-shadow: 0 2px 6px rgba(0, 95, 59, 0.3);">
+            Ouvrir la discussion
+        </a>
+    </div>
+
+    <!-- CARTE DERNIÈRES COMMANDES -->
+    <div style="margin-bottom: 30px;">
+        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 12px;">
+            <div style="color: #555;">
+                <!-- Icône Petit Sac -->
+                <i data-lucide="shopping-bag" style="width: 20px; height: 20px;"></i>
+            </div>
+            <h3 style="margin: 0; color: #333; font-size: 1.1rem;">Mes dernières commandes</h3>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 10px;">
+            
+            {% if commandes %}
+                {% for cmd in commandes %}
+                <div style="background: #fafafa; border: 1px solid #eee; padding: 12px; border-radius: 10px; display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <span style="font-size: 0.8rem; color: #888; display: block;">
+                            Cmd #{{ cmd.commande_id }} - {{ cmd.date_commande.strftime('%d/%m/%Y') if cmd.date_commande else '' }}
+                        </span>
+                        <span style="font-size: 0.9rem; font-weight: bold; color: #333;">
+                            {{ cmd.liste_produits if cmd.liste_produits else 'Commande d\'articles' }}
+                        </span>
+                    </div>
+                    <div style="text-align: right;">
+                        <span style="font-size: 0.95rem; font-weight: bold; color: #2e7d32; display: block;">
+                            {{ cmd.total_provisoire }} FC
+                        </span>
+                        
+                        <!-- Gestion du Badge Statut -->
+                        {% if cmd.statut == 'en_attente' %}
+                            <span style="font-size: 0.75rem; background: #fff3e0; color: #e65100; padding: 2px 6px; border-radius: 4px; font-weight: bold;">
+                                En cours
+                            </span>
+                        {% else %}
+                            <span style="font-size: 0.75rem; background: #e8f5e9; color: #2e7d32; padding: 2px 6px; border-radius: 4px; font-weight: bold;">
+                                Livré
+                            </span>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <div style="background: #fafafa; border: 1px dashed #ccc; padding: 15px; border-radius: 10px; text-align: center; color: #777; font-size: 0.9rem;">
+                    Aucune commande enregistrée pour le moment.
+                </div>
+            {% endif %}
+
+        </div>
+    </div>
+
+    <!-- BOUTON NOUVELLE COMMANDE -->
+    <div style="position: sticky; bottom: 20px; background: rgba(255,255,255,0.9); padding: 10px 0;">
+        <a href="{{ url_for('catalogue') }}" class="btn-main" style="display: flex; align-items: center; justify-content: center; gap: 10px;">
+            <i data-lucide="shopping-cart" style="width: 20px; height: 20px;"></i>
+            Voir nos produits / Nouvelle commande
+        </a>
+    </div>
+
+</div>
+
+<!-- INCLUSION ET INITIALISATION DE LUCIDE ICONS (pour afficher le bonhomme et le sac) -->
+<script src="https://unpkg.com/lucide@latest"></script>
+<script>
+    lucide.createIcons();
+</script>
+{% endblock %}
