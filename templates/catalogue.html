@@ -92,7 +92,8 @@
             {% for p in legumes %}
             <div class="produit-card">
                 <div class="card-header">
-                    <img src="{{ url_for('static', filename='images/legumes/' + (p.image_url if p.image_url else 'default.jpg')) }}" 
+                    <!-- Chemin fixe vers static/legumes/ -->
+                    <img src="{{ url_for('static', filename='legumes/' + (p.image_url if p.image_url else 'default.jpg')) }}" 
                          alt="{{ p.nom_produit }}" 
                          class="produit-img" 
                          onerror="this.src='https://via.placeholder.com/250x250?text=Image+Indisponible'">
@@ -121,7 +122,8 @@
             {% for p in epices %}
             <div class="produit-card">
                 <div class="card-header">
-                    <img src="{{ url_for('static', filename='images/legumes/' + (p.image_url if p.image_url else 'default.jpg')) }}" 
+                    <!-- Chemin fixe vers static/legumes/ -->
+                    <img src="{{ url_for('static', filename='legumes/' + (p.image_url if p.image_url else 'default.jpg')) }}" 
                          alt="{{ p.nom_produit }}" 
                          class="produit-img" 
                          onerror="this.src='https://via.placeholder.com/250x250?text=Image+Indisponible'">
