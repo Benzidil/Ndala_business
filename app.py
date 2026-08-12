@@ -11,12 +11,14 @@ from flask_mysqldb import MySQL
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'ndala_business_secret_key_2026'
 
-app.config['MYSQL_HOST'] = os.environ.get('MYSQL_HOST', '127.0.0.1')
-app.config['MYSQL_USER'] = os.environ.get('MYSQL_USER', 'root')
-app.config['MYSQL_PASSWORD'] = os.environ.get('MYSQL_PASSWORD', '')
-app.config['MYSQL_DB'] = os.environ.get('MYSQL_DB', 'ndala_business_db')
-app.config['MYSQL_CURSORCLASS'] = 'DictCursor'
+import os
 
+# Configuration MySQL (Récupère les variables d'environnement de Render)
+app.config['MYSQL_HOST'] = os.environ.get('DB_HOST', 'benqfztrllpcnvwzg4uz-mysql.services.clever-cloud.com')
+app.config['MYSQL_USER'] = os.environ.get('DB_USER', 'uusjbicawtiwwyrr')
+app.config['MYSQL_PASSWORD'] = os.environ.get('DB_PASSWORD', 'rqp0tI67ZpOpmPOfyuj1')
+app.config['MYSQL_DB'] = os.environ.get('DB_NAME', 'ndala_business_db')
+app.config['MYSQL_PORT'] = int(os.environ.get('DB_PORT', 3306))
 mysql = MySQL(app)
 
 
