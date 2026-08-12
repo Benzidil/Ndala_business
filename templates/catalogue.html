@@ -93,16 +93,35 @@
             {% for p in legumes %}
             <div class="produit-card">
                 <div class="card-header">
-                    <!-- Génère static/images/legumes/<nom_image.jpg> -->
-                    <img src="{{ url_for('static', filename='images/legumes/' + p.image_url if p.image_url and not p.image_url.startswith('images/') else p.image_url if p.image_url else 'images/legumes/default.jpg') }}" 
+                    {% if p.image_url %}
+                        {% if p.image_url.startswith('images/') %}
+                            {% set img_filename = p.image_url %}
+                        {% elif p.image_url.startswith('legumes/') %}
+                            {% set img_filename = 'images/' + p.image_url %}
+                        {% else %}
+                            {% set img_filename = 'images/legumes/' + p.image_url %}
+                        {% endif %}
+                    {% else %}
+                        {% set img_filename = 'images/legumes/default.jpg' %}
+                    {% endif %}
+
+                    <img src="{{ url_for('static', filename=img_filename) }}" 
                          alt="{{ p.nom_produit }}" 
                          class="produit-img" 
-                         onerror="this.src='https://via.placeholder.com/250x250?text=Image+Indisponible'">
+                         onerror="this.onerror=null; this.src='https://via.placeholder.com/250x250?text=Image+Indisponible';">
                 </div>
                 <div class="card-body">
                     <div class="produit-info">
                         <span class="produit-nom">{{ p.nom_produit }}</span>
-                        <span class="produit-prix">{{ "{:,.0f}".format(p.prix_unitaire).replace(",", " ") }} FC</span>
+                        <span class="produit-prix">
+                            {% if p.prix_unitaire is defined %}
+                                {{ "{:,.0f}".format(p.prix_unitaire).replace(",", " ") }}
+                            {% elif p.prix is defined %}
+                                {{ "{:,.0f}".format(p.prix).replace(",", " ") }}
+                            {% else %}
+                                0
+                            {% endif %} FC
+                        </span>
                     </div>
                     <div class="card-action">
                         <input type="checkbox" name="produit[]" value="{{ p.nom_produit }}" class="produit-checkbox">
@@ -124,15 +143,35 @@
             {% for p in epices %}
             <div class="produit-card">
                 <div class="card-header">
-                    <img src="{{ url_for('static', filename='images/legumes/' + p.image_url if p.image_url and not p.image_url.startswith('images/') else p.image_url if p.image_url else 'images/legumes/default.jpg') }}" 
+                    {% if p.image_url %}
+                        {% if p.image_url.startswith('images/') %}
+                            {% set img_filename = p.image_url %}
+                        {% elif p.image_url.startswith('legumes/') %}
+                            {% set img_filename = 'images/' + p.image_url %}
+                        {% else %}
+                            {% set img_filename = 'images/legumes/' + p.image_url %}
+                        {% endif %}
+                    {% else %}
+                        {% set img_filename = 'images/legumes/default.jpg' %}
+                    {% endif %}
+
+                    <img src="{{ url_for('static', filename=img_filename) }}" 
                          alt="{{ p.nom_produit }}" 
                          class="produit-img" 
-                         onerror="this.src='https://via.placeholder.com/250x250?text=Image+Indisponible'">
+                         onerror="this.onerror=null; this.src='https://via.placeholder.com/250x250?text=Image+Indisponible';">
                 </div>
                 <div class="card-body">
                     <div class="produit-info">
                         <span class="produit-nom">{{ p.nom_produit }}</span>
-                        <span class="produit-prix">{{ "{:,.0f}".format(p.prix_unitaire).replace(",", " ") }} FC</span>
+                        <span class="produit-prix">
+                            {% if p.prix_unitaire is defined %}
+                                {{ "{:,.0f}".format(p.prix_unitaire).replace(",", " ") }}
+                            {% elif p.prix is defined %}
+                                {{ "{:,.0f}".format(p.prix).replace(",", " ") }}
+                            {% else %}
+                                0
+                            {% endif %} FC
+                        </span>
                     </div>
                     <div class="card-action">
                         <input type="checkbox" name="produit[]" value="{{ p.nom_produit }}" class="produit-checkbox">
@@ -191,7 +230,7 @@
                 </select>
             </div>
 
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px;">
                 <div class="form-group">
                     <label>Montant versé (FC) :</label>
                     <input type="number" name="montant_verse" id="montant_verse" placeholder="Ex: 15000" class="form-control" required>
