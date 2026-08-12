@@ -17,7 +17,7 @@ app.config['MYSQL_PASSWORD'] = os.environ.get('DB_PASSWORD', 'rqp0tI67ZpOpmPOfyu
 app.config['MYSQL_DB'] = os.environ.get('DB_NAME', 'benqfztrllpcnvwzg4uz')
 app.config['MYSQL_PORT'] = int(os.environ.get('DB_PORT', 3306))
 
-# Force MySQLdb à retourner des dictionnaires au lieu de tuples
+# Force MySQLdb à retourner des dictionnaires
 app.config['MYSQL_CURSORCLASS'] = 'DictCursor'
 
 mysql = MySQL(app)
@@ -147,7 +147,7 @@ def admin_dashboard():
         cur.execute("SELECT id, nom_produit, prix_unitaire FROM produits ORDER BY nom_produit ASC")
         produits = cur.fetchall()
 
-        # 2. Récupérer toutes les commandes (Colonne total corrigée)
+        # 2. Récupérer toutes les commandes
         query_commandes = """
             SELECT 
                 c.id AS commande_id,
@@ -247,7 +247,7 @@ def modifier_prix():
 def passer_commande():
     id_utilisateur = 1 
     
-    # Frais de livraison de base
+    # Frais de livraison de base (5 000 FC)
     frais_livraison_base = 5000.0
     
     # 1. Récupération des données du formulaire
@@ -264,7 +264,7 @@ def passer_commande():
             flash("Veuillez renseigner les informations de paiement ou cocher l'option sans dépôt.")
             return redirect(url_for('catalogue'))
         
-        # Vérification préventive d'unicité de la référence saisie
+        # Vérification préventive d'unicité de la référence
         try:
             with mysql.connection.cursor() as cur:  # type: ignore
                 cur.execute("SELECT id FROM transactions WHERE reference_paiement = %s", (reference_paiement,))
@@ -323,7 +323,7 @@ def passer_commande():
     sous_total_produits = sum(p.calculer_sous_total() for p in produits_commandes)
     total_facture = sous_total_produits + frais_livraison_base
     
-    # Enregistrement en BD avec gestion de transaction (Colonne 'total' corrigée)
+    # Enregistrement en BD (Structure corrigée sans colonne 'nom_autre')
     try:
         with mysql.connection.cursor() as cur:  # type: ignore
             cur.execute(
@@ -335,16 +335,17 @@ def passer_commande():
             for p in produits_commandes:
                 if p.type == "Standard":
                     cur.execute(
-                        "INSERT INTO lignes_commande (commande_id, produit_id, nom_autre, quantite, prix_unitaire) VALUES (%s, %s, NULL, %s, %s)",
+                        "INSERT INTO lignes_commande (commande_id, produit_id, quantite, prix_unitaire) VALUES (%s, %s, %s, %s)",
                         (id_commande, p.id_db, p.quantite, p.prix_unitaire)
                     )
                 else:
+                    # Pour les produits sur mesure / hors liste : enregistrement sans produit_id
                     cur.execute(
-                        "INSERT INTO lignes_commande (commande_id, produit_id, nom_autre, quantite, prix_unitaire) VALUES (%s, NULL, %s, %s, 0.00)",
-                        (id_commande, p.nom, p.quantite)
+                        "INSERT INTO lignes_commande (commande_id, produit_id, quantite, prix_unitaire) VALUES (%s, NULL, %s, 0.00)",
+                        (id_commande, p.quantite)
                     )
             
-            # Insertion de la transaction de paiement
+            # Insertion de la transaction
             if is_sans_depot:
                 ref_unique = f"SD-{int(time.time())}-{uuid.uuid4().hex[:4].upper()}"
                 cur.execute(
@@ -368,18 +369,18 @@ def passer_commande():
         flash(f"Erreur lors de l'enregistrement de la commande : {e}")
         return redirect(url_for('catalogue'))
         
-    # Préparation WhatsApp
+    # Préparation du récapitulatif WhatsApp avec frais de livraison (5 000 FC)
     details_texte = f"Nouvelle Commande Ndala Business (N°{id_commande})\n\n"
     for p in produits_commandes:
         if p.type == "Standard":
             details_texte += f"- {p.nom} x{p.quantite} ({p.calculer_sous_total()} FC)\n"
         else:
-            details_texte += f"- {p.nom} (Hors-Liste) x{p.quantite} [Prix a fixer]\n"
+            details_texte += f"- {p.nom} (Hors-Catalogue) x{p.quantite} [Prix à fixer]\n"
             
     details_texte += f"\nSous-total produits : {sous_total_produits} FC\n"
-    details_texte += f"Frais de livraison (estimatifs) : {int(frais_livraison_base)} FC*\n"
+    details_texte += f"Frais de livraison fixe : {int(frais_livraison_base)} FC*\n"
     details_texte += f"Total estimé : {total_facture} FC\n"
-    details_texte += "*(Le prix de livraison peut varier selon votre commune/distance exacte)\n\n"
+    details_texte += "*(Le prix de livraison peut ajuster selon votre commune/distance exacte)\n\n"
     
     if is_sans_depot:
         details_texte += "STATUT PAIEMENT : AUCUN DEPOT EFFECTUE\n"
@@ -388,7 +389,7 @@ def passer_commande():
         details_texte += f"Paiement : {montant_verse} FC via {mode_paiement}\n"
         details_texte += f"Ref SMS : {reference_paiement}\n\n"
         
-    details_texte += "Puis-je discuter sur la commande avec vous ?"
+    details_texte += "Veuillez m'indiquer votre commune et votre adresse exacte pour organiser la livraison."
     
     texte_url = urllib.parse.quote(details_texte)
     lien_whatsapp = f"https://wa.me/243818378478?text={texte_url}"
