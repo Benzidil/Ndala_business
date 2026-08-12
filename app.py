@@ -1,24 +1,25 @@
 import uuid
 import time
 import urllib.parse
+import os
 from flask import Flask, render_template, request, redirect, url_for, flash
 from flask_mysqldb import MySQL
 from MySQLdb.cursors import DictCursor 
-import os
-from flask_mysqldb import MySQL
 
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'ndala_business_secret_key_2026'
 
-import os
-
-# Configuration MySQL (Récupère les variables d'environnement de Render)
+# Configuration MySQL
 app.config['MYSQL_HOST'] = os.environ.get('DB_HOST', 'benqfztrllpcnvwzg4uz-mysql.services.clever-cloud.com')
 app.config['MYSQL_USER'] = os.environ.get('DB_USER', 'uusjbicawtiwwyrr')
 app.config['MYSQL_PASSWORD'] = os.environ.get('DB_PASSWORD', 'rqp0tI67ZpOpmPOfyuj1')
-app.config['MYSQL_DB'] = os.environ.get('DB_NAME', 'ndala_business_db')
+app.config['MYSQL_DB'] = os.environ.get('DB_NAME', 'benqfztrllpcnvwzg4uz')
 app.config['MYSQL_PORT'] = int(os.environ.get('DB_PORT', 3306))
+
+# Force MySQLdb à retourner des dictionnaires au lieu de tuples
+app.config['MYSQL_CURSORCLASS'] = 'DictCursor'
+
 mysql = MySQL(app)
 
 
@@ -394,7 +395,7 @@ def passer_commande():
     
     return redirect(lien_whatsapp)
 
-
 if __name__ == '__main__':
-    # host='0.0.0.0' permet à Docker d'exposer l'application sur le réseau
-    app.run(host='0.0.0.0', port=5000, debug=True)
+    # Récupère le mode debug depuis les variables d'environnement (False par défaut en prod)
+    debug_mode = os.environ.get('FLASK_DEBUG', 'False').lower() in ['true', '1']
+    app.run(host='0.0.0.0', port=5000, debug=debug_mode)
