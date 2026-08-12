@@ -1,0 +1,31 @@
+
+<h3>Gestion des Prix des Produits</h3>
+
+<table>
+    <thead>
+        <tr>
+            <th>Produit</th>
+            <th>Prix Actuel (FC)</th>
+            <th>Nouveau Prix</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for p in produits %}
+        <tr>
+            <td>{{ p.nom_produit }}</td>
+            <td><strong>{{ p.prix }} FC</strong></td>
+            <td>
+                <!-- Formulaire rapide par produit -->
+                <form action="/admin/modifier-prix" method="POST" style="display: flex; gap: 5px;">
+                    <input type="hidden" name="produit_id" value="{{ p.produit_id }}">
+                    <input type="number" name="nouveau_prix" value="{{ p.prix }}" step="500" style="width: 100px; padding: 4px;">
+                    <button type="submit" style="background: #017a48; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer;">
+                        Enregistrer
+                    </button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>

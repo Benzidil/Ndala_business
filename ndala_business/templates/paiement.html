@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+
+{% block title %}Paiement - Ndala Business{% endblock %}
+
+{% block content %}
+<div style="padding: 20px;">
+    
+    <!-- Retour rapide en arrière -->
+    <a href="/catalogue" style="color: var(--primary); text-decoration: none; font-weight: bold; display: inline-block; margin-bottom: 15px;">← Modifier ma commande</a>
+
+    <h2 style="color: #333; margin-bottom: 5px;">Feuille de paiement</h2>
+    <p style="color: #666; font-size: 0.9rem; margin-top: 0; margin-bottom: 20px;">Finalisez votre commande en toute sécurité.</p>
+
+    <!-- Résumé de la note -->
+    <div style="background: var(--primary-light); padding: 15px; border-radius: 12px; margin-bottom: 25px;">
+        <h4 style="margin: 0 0 10px 0; color: var(--primary);">Résumé de la commande</h4>
+        <div style="display: flex; justify-content: space-between; font-size: 0.95rem; margin-bottom: 5px; color: #444;">
+            <span>Vos articles sélectionnés :</span>
+            <span style="font-weight: bold;">Calculé au backend</span>
+        </div>
+        <hr style="border: 0; border-top: 1px solid #c8e6c9; margin: 10px 0;">
+        <div style="display: flex; justify-content: space-between; font-size: 1.1rem; font-weight: bold; color: var(--primary);">
+            <span>Montant total :</span>
+            <span>6 500 FC</span> <!-- Cette valeur sera dynamique plus tard -->
+        </div>
+    </div>
+
+    <!-- Choix du mode de paiement -->
+    <form action="/passer_commande" method="POST" id="form-paiement">
+        <h3 style="font-size: 1rem; color: #333; margin-bottom: 12px;">Choisissez votre mode de paiement :</h3>
+
+        <!-- Option Mobile Money -->
+        <div style="background: white; border: 1px solid #ddd; padding: 15px; border-radius: 10px; margin-bottom: 12px; display: flex; align-items: flex-start; gap: 10px;">
+            <input type="radio" name="mode_paiement" value="mobile_money" id="pay_mm" checked style="margin-top: 4px;" onclick="toggleMobileMoneyField(true)">
+            <label for="pay_mm" style="width: 100%; cursor: pointer;">
+                <strong style="color: #111; display: block;">Mobile Money (M-Pesa, Orange Money, Airtel Money)</strong>
+                <span style="font-size: 0.8rem; color: #666; display: block; margin-top: 3px;">Un push USSD sera envoyé sur votre téléphone pour taper votre code PIN secret.</span>
+            </label>
+        </div>
+
+        <!-- Champ dynamique numéro Mobile Money -->
+        <div id="champ-numero-mm" style="margin-bottom: 20px; padding-left: 25px;">
+            <label style="display: block; margin-bottom: 5px; font-size: 0.85rem; font-weight: bold; color: #555;">Numéro à débiter :</label>
+            <input type="tel" name="numero_mobile_money" placeholder="Ex: 0820000000" style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 8px; box-sizing: border-box;">
+        </div>
+
+        <!-- Option Autre / Cash -->
+        <div style="background: white; border: 1px solid #ddd; padding: 15px; border-radius: 10px; margin-bottom: 25px; display: flex; align-items: flex-start; gap: 10px;">
+            <input type="radio" name="mode_paiement" value="autre" id="pay_autre" style="margin-top: 4px;" onclick="toggleMobileMoneyField(false)">
+            <label for="pay_autre" style="width: 100%; cursor: pointer;">
+                <strong style="color: #111; display: block;">Autre (Paiement cash à la livraison)</strong>
+                <span style="font-size: 0.8rem; color: #666; display: block; margin-top: 3px;">La commande est envoyée directement. Vous paierez en espèces à la réception des légumes.</span>
+            </label>
+        </div>
+
+        <button type="submit" class="btn-main">Confirmer et payer 🔒</button>
+    </form>
+</div>
+
+<!-- Petit script JS local pour cacher/afficher le champ numéro de tel -->
+<script>
+    function toggleMobileMoneyField(show) {
+        const field = document.getElementById('champ-numero-mm');
+        field.style.display = show ? 'block' : 'none';
+    }
+</script>
+{% endblock %}

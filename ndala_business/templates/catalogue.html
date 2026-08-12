@@ -87,14 +87,12 @@
 
     <form action="{{ url_for('passer_commande') }}" method="POST">
         
-        <!-- SECTION LÉGUMES -->
         <div class="section-title">Nos Légumes Frais</div>
         <div class="produit-grid">
             {% for p in legumes %}
             <div class="produit-card">
                 <div class="card-header">
-                    <!-- Génère static/images/legumes/<nom_image.jpg> -->
-                    <img src="{{ url_for('static', filename='images/legumes/' + p.image_url if p.image_url and not p.image_url.startswith('images/') else p.image_url if p.image_url else 'images/legumes/default.jpg') }}" 
+                    <img src="{{ url_for('static', filename='images/legumes/' + (p.image_url if p.image_url else 'default.jpg')) }}" 
                          alt="{{ p.nom_produit }}" 
                          class="produit-img" 
                          onerror="this.src='https://via.placeholder.com/250x250?text=Image+Indisponible'">
@@ -118,13 +116,12 @@
             {% endfor %}
         </div>
 
-        <!-- SECTION ÉPICES & CONDIMENTS -->
         <div class="section-title">Nos Épices & Condiments</div>
         <div class="produit-grid">
             {% for p in epices %}
             <div class="produit-card">
                 <div class="card-header">
-                    <img src="{{ url_for('static', filename='images/legumes/' + p.image_url if p.image_url and not p.image_url.startswith('images/') else p.image_url if p.image_url else 'images/legumes/default.jpg') }}" 
+                    <img src="{{ url_for('static', filename='images/legumes/' + (p.image_url if p.image_url else 'default.jpg')) }}" 
                          alt="{{ p.nom_produit }}" 
                          class="produit-img" 
                          onerror="this.src='https://via.placeholder.com/250x250?text=Image+Indisponible'">
@@ -148,7 +145,6 @@
             {% endfor %}
         </div>
 
-        <!-- ARTICLE HORS-LISTE -->
         <div class="section-title">Produit Sur Mesure</div>
         <div class="hors-liste-card">
             <div class="hors-liste-header">
@@ -167,7 +163,6 @@
             </div>
         </div>
 
-        <!-- PAIEMENT -->
         <div class="section-title">Paiement Mobile Money</div>
         
         <div class="sans-depot-box">

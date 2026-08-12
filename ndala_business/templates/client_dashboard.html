@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mon Compte - Ndala Business</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f7f6;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+        }
+        .btn {
+            padding: 10px 15px;
+            text-decoration: none;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+        .btn-logout {
+            background-color: #d9534f;
+            color: white;
+        }
+        .btn-home {
+            background-color: #5cb85c;
+            color: white;
+        }
+        .flash-messages {
+            margin-bottom: 20px;
+        }
+        .flash {
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 4px;
+            background-color: #d9edf7;
+            color: #31708f;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: #f8f9fa;
+        }
+        .statut {
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: bold;
+        }
+        .en_attente { background-color: #f0ad4e; color: white; }
+        .payee { background-color: #5bc0de; color: white; }
+        .livree { background-color: #5cb85c; color: white; }
+        .annulee { background-color: #d9534f; color: white; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="flash-messages">
+                {% for category, message in messages %}
+                    <div class="flash">{{ message }}</div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+
+    <div class="header">
+        <div>
+            <h1>Mon Espace Client</h1>
+            <p>Bienvenue, <strong>{{ session['user_nom'] }}</strong></p>
+        </div>
+        <div>
+            <a href="{{ url_for('index') }}" class="btn btn-home">Retour au Catalogue</a>
+            <a href="{{ url_for('logout') }}" class="btn btn-logout">Déconnexion</a>
+        </div>
+    </div>
+
+    <h2>Historique de mes commandes</h2>
+
+    {% if commandes %}
+        <table>
+            <thead>
+                <tr>
+                    <th>N° Commande</th>
+                    <th>Date</th>
+                    <th>Total Provisoire</th>
+                    <th>Statut</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for commande in commandes %}
+                <tr>
+                    <td>#{{ commande.id }}</td>
+                    <td>{{ commande.date_commande }}</td>
+                    <td>{{ commande.total_provisoire }} FC</td>
+                    <td>
+                        <span class="statut {{ commande.statut }}">
+                            {{ commande.statut | replace('_', ' ') | capitalize }}
+                        </span>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>Vous n'avez pas encore passé de commande.</p>
+    {% endif %}
+</div>
+
+</body>
+</html>
