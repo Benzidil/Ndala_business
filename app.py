@@ -147,13 +147,13 @@ def admin_dashboard():
         cur.execute("SELECT id, nom_produit, prix_unitaire FROM produits ORDER BY nom_produit ASC")
         produits = cur.fetchall()
 
-        # 2. Récupérer toutes les commandes (Jointure corrigée avec la table 'transactions')
+        # 2. Récupérer toutes les commandes (Colonne total corrigée)
         query_commandes = """
             SELECT 
                 c.id AS commande_id,
                 COALESCE(u.nom, 'Client WhatsApp') AS client_nom,
                 COALESCE(u.telephone, 'N/A') AS client_telephone,
-                COALESCE(c.total_provisoire, 0) AS total_provisoire,
+                COALESCE(c.total, 0) AS total_provisoire,
                 COALESCE(c.statut, 'en_attente') AS statut_commande,
                 c.date_commande,
                 COALESCE(t.mode_paiement, 'WhatsApp') AS mode_paiement,
@@ -323,11 +323,11 @@ def passer_commande():
     sous_total_produits = sum(p.calculer_sous_total() for p in produits_commandes)
     total_facture = sous_total_produits + frais_livraison_base
     
-    # Enregistrement en BD avec gestion de transaction
+    # Enregistrement en BD avec gestion de transaction (Colonne 'total' corrigée)
     try:
         with mysql.connection.cursor() as cur:  # type: ignore
             cur.execute(
-                "INSERT INTO commandes (utilisateur_id, total_provisoire, statut) VALUES (%s, %s, 'en_attente')",
+                "INSERT INTO commandes (utilisateur_id, total, statut) VALUES (%s, %s, 'en_attente')",
                 (id_utilisateur, total_facture)
             )
             id_commande = cur.lastrowid
@@ -388,7 +388,7 @@ def passer_commande():
         details_texte += f"Paiement : {montant_verse} FC via {mode_paiement}\n"
         details_texte += f"Ref SMS : {reference_paiement}\n\n"
         
-    details_texte += "Veuillez m'indiquer votre commune et votre adresse exacte pour ajuster la livraison."
+    details_texte += "Puis-je discuter sur la commande avec vous ?"
     
     texte_url = urllib.parse.quote(details_texte)
     lien_whatsapp = f"https://wa.me/243818378478?text={texte_url}"
@@ -396,6 +396,5 @@ def passer_commande():
     return redirect(lien_whatsapp)
 
 if __name__ == '__main__':
-    # Récupère le mode debug depuis les variables d'environnement (False par défaut en prod)
     debug_mode = os.environ.get('FLASK_DEBUG', 'False').lower() in ['true', '1']
     app.run(host='0.0.0.0', port=5000, debug=debug_mode)
