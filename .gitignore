@@ -13,4 +13,4 @@ __pycache__/
 # Fichiers système / IDE
 .DS_Store
 .idea/
-.vscode/
+.vscode/.tmp.driveupload/
